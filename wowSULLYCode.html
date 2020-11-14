@@ -20,7 +20,66 @@
         </div>
         <div class = "container">
             <div class = "row" id = "filters">
-                
+                <div class = "col-sm-4">
+                    <h2>Filters</h2>
+                    <form>
+                        <h4>Graph Type:</h4>
+                        <input type = "radio" name = "bar" value = "bar">
+                        <label for = "bar">Bar</label>
+                        <input type = "radio" name = "pie" value = "pie">
+                        <label for = "pie">Pie</label>
+                        <input type = "radio" name = "line" value = "line">
+                        <label for = "line">Line</label>
+                        <br><br>
+
+                        <h4>Attributes</h4>
+                        <label for = "levelEntry">Level: (1-80)</label><br>
+                        <input type = "text"></input><br><br>
+                        
+                        <label for = "raceSelect">Race:</label><br>
+                        <select name = "raceSelect" id = "race">
+                            <option value = "orc">Orc</option>
+                            <option value = "troll">Troll</option>
+                            <option value = "tauren">Tauren</option>
+                            <option value = "undead">Undead</option>
+                            <option value = "bloodelf">Blood Elf</option>
+                        </select><br><br>
+
+                        <label for = "classSelect">Class:</label><br>
+                        <select name = "classSelect" id = "race">
+                            <option value = "warrior">Warrior</option>
+                            <option value = "warlock">Warlock</option>
+                            <option value = "druid">Druid</option>
+                            <option value = "paladin">Paladin</option>
+                            <option value = "mage">Mage</option>
+                            <option value = "priest">Priest</option>
+                            <option value = "rouge">Rouge</option>
+                            <option value = "Hunter">Hunter</option>
+                            <option value = "shaman">Shaman</option>
+                            <option value = "deathknight">Death Knight</option>
+                        </select><br><br>
+
+                        <label for = "regionSelect">Regions</label><br>
+                        <select value = "regionData" id = "regions">
+                            <option value = "">Regions will display once data sheet is integrated</option>
+                        </select><br><br>
+
+                        <label for = "timeSelect">Time</label><br>
+                        <select value = "timeData" id = "time">
+                            <option value = "">Times will display once data sheet is integrated</option>
+                        </select><br>
+                    </form>
+                </div>
+
+                <!--- Area where the graphs will display-->
+                <div class = "col-md-8">
+                    <h3>Graphs</h3>
+                    <svg id = "graph-area">
+                        <div class = "rect">
+                            
+                        </div>
+                    </svg>
+                </div>
             </div>
         </div>
     </body>
