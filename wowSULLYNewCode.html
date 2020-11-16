@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSE 494 Team Project</title>
+        <meta charset="UTF-8">
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+        
+        <!-- CSS Code Here-->
+        <style>
+            .inside{
+            font-size: 15px;
+            font-weight: bold;
+            fill: white;
+            }
+            .label{
+                    font-size: 25px;
+                    font-weight: bold;
+            }
+        </style>
+    </head>
+
+    <!-- Body Code Here-->
+    <body>
+        <div class = "jumbotron text-left">
+            <h1>WOWAH Dataset Visualizations</h1>
+            <p>Insert description about project and everything this page can do</p>
+        </div>
+        <div class = "container">
+            <div class = "row" id = "filters">
+                <div class = "col-sm-4">
+                    <h2>Filters</h2>
+                    <form>
+                        <h4>Graph Type:</h4>
+                        <!-- <input type = "radio" name = "bar" value = "bar" onselect="console.log('1')">
+                        <label for = "bar">Bar</label>
+                        <input type = "radio" name = "pie" value = "pie" onselect="createPieChart">
+                        <label for = "pie">Pie</label>
+                        <input type = "radio" name = "line" value = "line" onselect="createLineChart">
+                        <label for = "line">Line</label> -->
+                        Type Of Chart:&nbsp;   <!-- '&nspb;' adds a space in an HTML line. -->
+                        <select id="chartSelect" onchange='chartSelector();'>
+                            <option value='BarChart'>Bar Chart</value>
+                            <option value='LineChart'>Line Chart</value>
+                            <option value='PieChart'>Pie Chart</value>
+                            
+                        </select>
+                        <br><br>
+
+                        <h4>Attributes</h4>
+                        <label for = "levelEntry">Level: (1-80)</label><br>
+                        <input type = "text"></input><br><br>
+                        
+                        <label for = "raceSelect">Race:</label><br>
+                        <select name = "raceSelect" id = "race">
+                            <option value = "orc">Orc</option>
+                            <option value = "troll">Troll</option>
+                            <option value = "tauren">Tauren</option>
+                            <option value = "undead">Undead</option>
+                            <option value = "bloodelf">Blood Elf</option>
+                        </select><br><br>
+
+                        <label for = "classSelect">Class:</label><br>
+                        <select name = "classSelect" id = "race">
+                            <option value = "warrior">Warrior</option>
+                            <option value = "warlock">Warlock</option>
+                            <option value = "druid">Druid</option>
+                            <option value = "paladin">Paladin</option>
+                            <option value = "mage">Mage</option>
+                            <option value = "priest">Priest</option>
+                            <option value = "rouge">Rouge</option>
+                            <option value = "Hunter">Hunter</option>
+                            <option value = "shaman">Shaman</option>
+                            <option value = "deathknight">Death Knight</option>
+                        </select><br><br>
+
+                        <label for = "regionSelect">Regions</label><br>
+                        <select value = "regionData" id = "regions">
+                            <option value = "">Regions will display once data sheet is integrated</option>
+                        </select><br><br>
+
+                        <label for = "timeSelect">Time</label><br>
+                        <select value = "timeData" id = "time">
+                            <option value = "">Times will display once data sheet is integrated</option>
+                        </select><br>
+                    </form>
+                </div>
+
+                <!--- Area where the graphs will display-->
+                <div class = "col-md-8">
+                    <h3>Graphs</h3>
+                    <svg id = "graph-area" height="450px" width="700px">
+                        
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </body>
+    
+    <!-- JS Code Here-->
+    <script>
+        
+        let wowData
+        d3.csv('wowah_data.csv').then(data => {
+            
+            
+            
+            wowData = data
+            wowData = wowData.slice(0,1000)
+            console.log(wowData)
+            arrayToAnalyze = showBreakdownOfRaceOfCharactersByLevel(wowData, '70')
+        })
+
+        function showBreakdownOfRaceOfCharactersByLevel(dataToAnalyze, level){
+            var arrayOfRaces = []
+            var arrayOfRacesAndNumber = []
+            for (var i = 0; i < dataToAnalyze.length; i++){
+                if (dataToAnalyze[i][' level']== level){
+                    arrayOfRaces.push(dataToAnalyze[i][' race'])
+                }
+            }
+            //console.log(arrayOfRaces)
+            arrayOfRaces = [...new Set(arrayOfRaces)]
+            //console.log(arrayOfRaces)
+
+            for (var i = 0; i < arrayOfRaces.length; i++){
+                var currentRace = arrayOfRaces[i]
+                arrayOfRacesAndNumber.push({"race": currentRace, "number": 0})
+            }
+            //console.log(arrayOfRacesAndNumber)
+
+            for (var i = 0; i < dataToAnalyze.length; i++){
+                if (dataToAnalyze[i][' level']== level){
+                    
+                    var currentRace = dataToAnalyze[i][' race']
+                    //console.log(currentRace)
+                    currentRace = currentRace.trim()
+                    //console.log(currentRace)
+                    for (var j = 0; j< arrayOfRacesAndNumber.length; j++){
+                        //console.log(arrayOfRacesAndNumber[j].race)
+                        if(arrayOfRacesAndNumber[j].race == currentRace){
+                            arrayOfRacesAndNumber[j].number+=1
+                        }
+                    }
+
+
+                }
+            }
+            console.log(arrayOfRacesAndNumber)
+
+            return arrayOfRacesAndNumber
+        }
+
+
+
+        function chartSelector(){
+            let chartAttribute = document.getElementById('chartSelect').value
+            if (chartAttribute == "PieChart"){
+                console.log('Pie Chart Selected')
+                createPieChart()
+            } else if (chartAttribute == "BarChart"){
+                console.log('Bar Chart Selected')
+                createBarChart()
+            } else if (chartAttribute == "LineChart"){
+                console.log('Line Chart Selected')
+                createLineChart()
+            } else {
+                console.log('Error')
+            }
+        }
+    </script>
+    <script>
+        function createPieChart(){
+            console.log("Pie")
+            var width = 700, height = 450;
+            var colors = d3.scaleOrdinal(d3.schemeDark2)
+            var svg = d3.select("#graph-area").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+
+            /* 
+            var details =  [{grade: "A+", number:8}, {grade: "A", number:21}, 
+                            {grade: "B", number:15}, {grade: "C", number:29}, 
+                            {grade: "D", number:11}, {grade: "F", number:6}]
+            */
+            var dataToPlot = arrayToAnalyze
+
+            console.log(dataToPlot)
+            var data = d3.pie().sort(null).value(function(d){ return d.number })(dataToPlot)
+            // adding sort will sort by order in which you see the details array
+            console.log(data)
+
+            var segments = d3.arc()
+                            .innerRadius(0)
+                            .outerRadius(200)
+                            .padAngle(.05)
+                            .padRadius(1)
+
+            var sections = svg.append("g").attr('transform', 'translate(250,250)')
+                            .selectAll('path').data(data)
+
+            sections.enter().append('path').attr('d', segments).attr("fill", 
+            function(d){ return colors(d.data.number)})
+
+            var content = d3.select('g').selectAll('text').data(data)
+            content.enter().append('text').classed('inside', true).each(function(d){
+                var center = segments.centroid(d)
+                console.log(center)
+                d3.select(this).attr('x', center[0]).attr('y', center[1])
+                    .text(d.data.number)
+            })
+
+            var legends = svg.append('g').attr('transform','translate(500,100)')
+                            .selectAll('.legends').data(data)
+
+            var legend = legends.enter()
+                            .append('g')
+                            .classed('legends',true)
+                            .attr('transform', function(d,i){
+                                return "translate(0," + (i+1)*30 +")"
+                            })
+
+            legend.append("rect").attr("width", 20).attr("height", 20).attr("fill",
+                            function(d){ return colors(d.data.number)})
+            
+            legend.append('text').classed('label',true).text(function(d ){ return d.data.race })
+                            .attr('fill', function(d){ return colors(d.data.number)})
+                            .attr('x', 30)
+                            .attr('y', 20)
+            
+            
+        }
+    </script>
+    <script>
+        function createLineChart(){
+            console.log("Line")
+            var width = 600, height = 450;
+            var svg = d3.select("#graph-area").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                
+
+            
+        }
+    </script>
+    <script>
+        function createBarChart(){
+            console.log("Bar")
+            var width = 600, height = 450;
+            var svg = d3.select("#graph-area").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                
+
+            
+        }
+    </script>
+</html>
